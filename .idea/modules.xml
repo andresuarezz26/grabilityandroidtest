@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GrabilityAndroidTest.iml" filepath="$PROJECT_DIR$/GrabilityAndroidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/grabilityandroidtest.iml" filepath="$PROJECT_DIR$/grabilityandroidtest.iml" />
     </modules>
   </component>
 </project>

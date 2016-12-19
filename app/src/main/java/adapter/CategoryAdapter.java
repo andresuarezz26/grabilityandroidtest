@@ -41,7 +41,6 @@ public class CategoryAdapter extends RecyclerView.Adapter <CategoryAdapter.ViewH
     public void onBindViewHolder(CategoryAdapter.ViewHolder holder, int position)
     {
         holder.textCategory.setText( categoryList.get(position).getLabel() );
-
     }
 
     @Override

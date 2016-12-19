@@ -6,16 +6,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.grability.gerardosuarez.grabilityandroidtest.R;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -49,6 +45,13 @@ public class CategoryFragment extends Fragment
 
     private ArrayList<AttributesCategory> categoryList;
 
+    /**
+     * Initialize the components
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -56,22 +59,13 @@ public class CategoryFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_category,
                 container, false);
 
-        Button button = (Button) view.findViewById(R.id.updateButton);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateDetail("fake");
-            }
-        });
-
         initComponents(view);
 
         return view;
     }
 
     /**
-     * Get the cateories from the activity for the first tiem
+     * Get the cateories from the activity for the first time
      * @param categoryList
      */
     @Subscribe
@@ -94,6 +88,9 @@ public class CategoryFragment extends Fragment
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Interface for capturing events
+     */
     public interface OnItemSelectedListener
     {
         void onCategorySelectedListener(String link);
@@ -104,9 +101,9 @@ public class CategoryFragment extends Fragment
      */
     public void initComponents(View view)
     {
-        categoryMapper = new CategoryEntryMapper();
+         categoryMapper = new CategoryEntryMapper();
 
-        categoryList = new ArrayList<AttributesCategory>(  );
+         categoryList = new ArrayList<AttributesCategory>(  );
 
          //RecyclerView components
          mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_main);
@@ -124,19 +121,24 @@ public class CategoryFragment extends Fragment
          //Listener recycler View
          mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), mRecyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
+                    @Override public void onItemClick(View view, int position)
+                    {
                         // do whatever
                         Toast.makeText(getActivity(), "Entro al click" + position,Toast.LENGTH_LONG).show();
-                        updateDetail(position+"");
+                        sendPosition(position+"");
                     }
 
-                    @Override public void onLongItemClick(View view, int position) {
+                    @Override public void onLongItemClick(View view, int position)
+                    {
                         // do whatever
                     }
                 })
          );
     }
 
+    /**
+     * Reload categoryList on onResume
+     */
     @Override
     public void onResume()
     {
@@ -172,8 +174,11 @@ public class CategoryFragment extends Fragment
         }
     }
 
-    // triggers update of the details fragment
-    public void updateDetail(String position)
+    /**
+     * Send the position to the MainActivity
+     * @param position
+     */
+    public void sendPosition(String position)
     {
         listener.onCategorySelectedListener(position);
     }

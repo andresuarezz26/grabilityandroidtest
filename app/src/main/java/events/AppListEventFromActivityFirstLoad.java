@@ -11,8 +11,11 @@ public class AppListEventFromActivityFirstLoad {
 
     private ArrayList <Entry> entry;
 
-    public AppListEventFromActivityFirstLoad(ArrayList<Entry> entry) {
+    private String category;
+
+    public AppListEventFromActivityFirstLoad(ArrayList<Entry> entry,String category) {
         this.entry = entry;
+        this.category = category;
     }
 
     public ArrayList<Entry> getEntry() {
@@ -21,5 +24,13 @@ public class AppListEventFromActivityFirstLoad {
 
     public void setEntry(ArrayList<Entry> entry) {
         this.entry = entry;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -15,4 +15,14 @@ public class AppListEventFromActivity {
     public AppListEventFromActivity(ArrayList<Entry> entry) {
         this.entry = entry;
     }
+
+    public ArrayList<Entry> getEntry() {
+        return entry;
+    }
+
+    public void setEntry(ArrayList<Entry> entry) {
+        this.entry = entry;
+    }
+
+
 }

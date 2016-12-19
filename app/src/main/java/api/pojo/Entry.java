@@ -45,6 +45,9 @@ public class Entry {
     @Expose
     private ImReleaseDate imReleaseDate;
 
+    public Entry (){
+
+    }
     /**
      * 
      * @return
