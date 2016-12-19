@@ -2,6 +2,7 @@ package com.grability.gerardosuarez.grabilityandroidtest;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -110,6 +111,11 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar( toolbar );
 
+        //Keep the portrait orientation for phone and landscape for tablet
+        if(getResources().getBoolean(R.bool.portrait_only)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         categoryMapper = new CategoryEntryMapper();
 
         categoryList = new ArrayList<AttributesCategory>(  );
@@ -205,6 +211,8 @@ public class MainActivity extends AppCompatActivity
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
+            transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
+
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack so the user can navigate back
             transaction.replace(R.id.fragment_container, newFragment);
@@ -213,7 +221,6 @@ public class MainActivity extends AppCompatActivity
             // Commit the transaction
             transaction.commit();
      }
-        Log.e(TAG, "size entries"+ entries.size());
 
         this.position = Integer.valueOf(position);
     }
@@ -230,6 +237,8 @@ public class MainActivity extends AppCompatActivity
         DetailAppFragment newFragment = new DetailAppFragment();
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back

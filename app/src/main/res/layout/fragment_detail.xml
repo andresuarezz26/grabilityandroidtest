@@ -2,24 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    >
 
  <TextView
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      android:id="@+id/text_app_name"
+     android:layout_marginTop="30dp"
+     android:textSize="35dp"
+     android:layout_gravity="center"
      android:text="hola mundo"/>
 
  <TextView
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      android:id="@+id/text_app_title"
+     android:textSize="25dp"
+     android:layout_marginTop="10dp"
+     android:layout_gravity="center"
+
      android:text="hola mundo"/>
 
  <TextView
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      android:id="@+id/text_app_amount"
+     android:textSize="25dp"
+     android:layout_marginTop="10dp"
+
+     android:layout_gravity="center"
+
      android:text="hola mundo"/>
 
 </LinearLayout>

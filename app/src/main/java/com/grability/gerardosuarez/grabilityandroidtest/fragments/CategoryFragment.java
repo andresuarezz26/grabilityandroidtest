@@ -125,7 +125,6 @@ public class CategoryFragment extends Fragment
                     @Override public void onItemClick(View view, int position)
                     {
                         // do whatever
-                        Toast.makeText(getActivity(), "Entro al click" + position,Toast.LENGTH_LONG).show();
                         sendPosition(position+"");
                     }
 

@@ -63,7 +63,16 @@ public class DetailAppFragment extends Fragment
     {
         name.setText(event.getEntry().getImName().getLabel());
         title.setText(event.getEntry().getTitle().getLabel());
-        amount.setText(event.getEntry().getImPrice().getAttributes().getAmount());
+        String price = event.getEntry().getImPrice().getAttributes().getAmount();
+        if( price.equals("0.00000"))
+        {
+            amount.setText(getResources().getText(R.string.text_price));
+        }else
+        {
+            price = "$ "+price;
+            amount.setText(price);
+        }
+
     }
 
     /**

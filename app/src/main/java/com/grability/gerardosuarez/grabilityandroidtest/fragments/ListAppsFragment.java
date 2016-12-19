@@ -115,7 +115,6 @@ public class ListAppsFragment extends Fragment
                     @Override public void onItemClick(View view, int position)
                     {
                         // do whatever
-                        Log.e(TAG, "ENTRIESSS"+entriesByCategory.size());
                         sendEntry(entriesByCategory.get(position));
                     }
 
