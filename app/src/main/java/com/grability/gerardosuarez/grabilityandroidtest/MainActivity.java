@@ -26,6 +26,9 @@ import api.pojo.Category;
 import api.pojo.Entry;
 import api.pojo.ObjectRoot;
 import bus.BusManager;
+import events.AppListEventFromActivity;
+import events.AppListEventFromActivityFirstLoad;
+import events.AppListEventFromFragment;
 import events.CategoryListEventFromActivity;
 import events.CategoryListEventFromFragment;
 import model.CategoryEntryMapper;
@@ -123,6 +126,7 @@ public class MainActivity extends AppCompatActivity
 
         BusManager.getInstance().getBus()
                 .post(categoryList);
+
     }
 
     /**
@@ -157,7 +161,7 @@ public class MainActivity extends AppCompatActivity
     {
         //Obtain entries by category
         entryPerCategory.addAll(categoryMapper.getEntryPerCategory((ArrayList<Entry>)entryPerCategory,
-                categoryList.get(Integer.valueOf(position)).getImId()));
+                categoryList.get(Integer.valueOf(position)).getLabel()));
 
         //Validate if the
         if (getResources().getBoolean(R.bool.twoPaneMode))
@@ -166,7 +170,8 @@ public class MainActivity extends AppCompatActivity
                     .findFragmentById(R.id.fragment_container);
 
             fragment.setEntriesByCategory(entryPerCategory);
-        } else {
+        } else
+        {
             // replace the fragment
             // Create fragment and give it an argument for the selected article
             ListAppsFragment newFragment = new ListAppsFragment();
@@ -184,9 +189,12 @@ public class MainActivity extends AppCompatActivity
 
             // Commit the transaction
             transaction.commit();
+     }
+        Log.e(TAG, "size entries"+ entryPerCategory.size());
 
-            BusManager.getInstance().getBus().post(entryPerCategory);
-        }
+        //Send the entry categories
+        BusManager.getInstance().getBus().post(new AppListEventFromActivityFirstLoad(entryPerCategory));
+
     }
 
 

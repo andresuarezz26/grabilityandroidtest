@@ -10,7 +10,6 @@ import com.grability.gerardosuarez.grabilityandroidtest.R;
 
 import java.util.ArrayList;
 
-import api.pojo.AttributesCategory;
 import api.pojo.Entry;
 
 
@@ -20,11 +19,11 @@ import api.pojo.Entry;
  */
 public class AppListAdapter extends RecyclerView.Adapter <AppListAdapter.ViewHolder>
 {
-    private ArrayList<Entry> categoryList;
+    private ArrayList<Entry> entryArrayList;
 
     public AppListAdapter(ArrayList <Entry> categoryList)
     {
-        this.categoryList = categoryList;
+        this.entryArrayList = categoryList;
     }
 
     @Override
@@ -39,14 +38,13 @@ public class AppListAdapter extends RecyclerView.Adapter <AppListAdapter.ViewHol
     @Override
     public void onBindViewHolder(AppListAdapter.ViewHolder holder, int position)
     {
-        holder.textCategory.setText( categoryList.get(position).getCategory().getAttributes().getLabel() );
-
+        holder.textCategory.setText( entryArrayList.get(position).getImName().getLabel());
     }
 
     @Override
     public int getItemCount()
     {
-        return categoryList.size();
+        return entryArrayList.size();
     }
 
     /**

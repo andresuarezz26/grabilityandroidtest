@@ -33,6 +33,8 @@ import adapter.CategoryAdapter;
 import api.pojo.AttributesCategory;
 import api.pojo.Entry;
 import bus.BusManager;
+import events.AppListEventFromActivityFirstLoad;
+import events.AppListEventFromFragment;
 import listener.RecyclerItemClickListener;
 import model.CategoryEntryMapper;
 
@@ -42,14 +44,15 @@ public class ListAppsFragment extends Fragment
 
     public static final String EXTRA_URL ="url";
 
-    private ArrayList<Entry> entriesByCategory;
-
     //RecyclerView parametters
     private RecyclerView mRecyclerView;
 
     private AppListAdapter adapter;
 
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private ArrayList<Entry> entriesByCategory;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,53 +61,37 @@ public class ListAppsFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_list_apps,
                 container, false);
 
+        BusManager.getInstance().getBus().register(this);
+
         initComponents(view);
 
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        Bundle bundle = getArguments();
-        if (bundle != null)
-        {
-            String link = bundle.getString("url");
-            setText(link);
-        }
-    }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        BusManager.getInstance().getBus().register(this);
 
+        //BusManager.getInstance().getBus().post(new AppListEventFromFragment());
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        BusManager.getInstance().getBus().unregister(this);
-    }
-
-    public void setText(String url)
-    {
-        TextView view = (TextView) getView().findViewById(R.id.detailsText);
-        view.setText(url);
+        //BusManager.getInstance().getBus().unregister(this);
     }
 
     /**
-     *
+     * Obtain entryes by category for the first time
      */
     @Subscribe
-    public void obtainEntriesByCategory (ArrayList <Entry> entriesByCategory)
+    public void obtainEntriesByCategoryFirstLoad (AppListEventFromActivityFirstLoad event)
     {
-        Log.e(TAG, "obtainEntriesByCategory"+ entriesByCategory.size());
         this.entriesByCategory.clear();
-        this.entriesByCategory.addAll(entriesByCategory);
+        this.entriesByCategory.addAll(event.getEntry());
         adapter.notifyDataSetChanged();
     }
 
@@ -113,7 +100,7 @@ public class ListAppsFragment extends Fragment
      */
     public void initComponents(View view)
     {
-        entriesByCategory = new ArrayList<Entry>(  );
+        entriesByCategory = new ArrayList<Entry>();
 
         //RecyclerView components
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_list_apps);
@@ -144,6 +131,8 @@ public class ListAppsFragment extends Fragment
                 })
         );
     }
+
+
     public ArrayList<Entry> getEntriesByCategory()
     {
         return entriesByCategory;

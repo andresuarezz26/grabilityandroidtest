@@ -71,7 +71,7 @@ public class CategoryFragment extends Fragment
     }
 
     /**
-     * Get the cateories from the activity
+     * Get the cateories from the activity for the first tiem
      * @param categoryList
      */
     @Subscribe
@@ -147,7 +147,7 @@ public class CategoryFragment extends Fragment
         {
            BusManager.getInstance().getBus().post(new CategoryListEventFromFragment());
         }
-        Log.e(TAG, "onResume CategoryFragment" + categoryList.size());
+
         adapter.notifyDataSetChanged();
     }
 

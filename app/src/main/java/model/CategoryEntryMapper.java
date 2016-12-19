@@ -53,7 +53,7 @@ public class CategoryEntryMapper
         ArrayList <Entry> entryPerCategory = new ArrayList <Entry> ();
         for (int i = 0; i < entryList.size() ; i++)
         {
-            if(entryList.get(i).getCategory().getAttributes().getImId().equalsIgnoreCase(categoryId))
+            if(entryList.get(i).getCategory().getAttributes().getLabel().equalsIgnoreCase(categoryId))
             {
                 entryPerCategory.add(entryList.get(i));
             }
