@@ -48,7 +48,7 @@ public class CategoryEntryMapper
      * @param categoryId
      * @return
      */
-    public ArrayList <Entry> getEntryPerCategory (List <Entry> entryList, String categoryId)
+    public ArrayList <Entry> getEntryPerCategory (ArrayList <Entry> entryList, String categoryId)
     {
         ArrayList <Entry> entryPerCategory = new ArrayList <Entry> ();
         for (int i = 0; i < entryList.size() ; i++)
@@ -58,7 +58,6 @@ public class CategoryEntryMapper
                 entryPerCategory.add(entryList.get(i));
             }
         }
-
         return entryPerCategory;
     }
 

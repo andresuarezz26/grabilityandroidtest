@@ -1,7 +1,9 @@
 package adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,17 +19,17 @@ import api.pojo.AttributesCategory;
  * Created by gerardosuarez
  * Adapter to manage the App Category List
  */
-public class ActivityMainAdapter extends RecyclerView.Adapter <ActivityMainAdapter.ViewHolder>
+public class CategoryAdapter extends RecyclerView.Adapter <CategoryAdapter.ViewHolder>
 {
     private ArrayList<AttributesCategory> categoryList;
 
-    public ActivityMainAdapter(ArrayList <AttributesCategory> categoryList)
+    public CategoryAdapter(ArrayList <AttributesCategory> categoryList)
     {
         this.categoryList = categoryList;
     }
 
     @Override
-    public ActivityMainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    public CategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View itemView = LayoutInflater.from( parent.getContext( ) )
                 .inflate( R.layout.category_item, parent, false );
@@ -36,7 +38,7 @@ public class ActivityMainAdapter extends RecyclerView.Adapter <ActivityMainAdapt
     }
 
     @Override
-    public void onBindViewHolder(ActivityMainAdapter.ViewHolder holder, int position)
+    public void onBindViewHolder(CategoryAdapter.ViewHolder holder, int position)
     {
         holder.textCategory.setText( categoryList.get(position).getLabel() );
 

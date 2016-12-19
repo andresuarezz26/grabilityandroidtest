@@ -1,39 +1,43 @@
 package com.grability.gerardosuarez.grabilityandroidtest;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.grability.gerardosuarez.grabilityandroidtest.fragments.CategoryFragment;
+import com.grability.gerardosuarez.grabilityandroidtest.fragments.ListAppsFragment;
+import com.squareup.otto.Bus;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import adapter.ActivityMainAdapter;
+import adapter.CategoryAdapter;
 import api.ApiManager;
 import api.pojo.AttributesCategory;
+import api.pojo.Entry;
 import api.pojo.ObjectRoot;
+import bus.BusManager;
 import model.CategoryEntryMapper;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class MainActivity extends AppCompatActivity implements Callback<ObjectRoot> {
-
-    private final String BASE_URL = "https://itunes.apple.com/";
+public class MainActivity extends AppCompatActivity
+        implements Callback<ObjectRoot>, CategoryFragment.OnItemSelectedListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
     //Object that converts the app list to category List
     private CategoryEntryMapper categoryMapper;
 
-    //RecyclerView parametters
-
-    private RecyclerView mRecyclerView;
-
-    private ActivityMainAdapter adapter;
-
-    private RecyclerView.LayoutManager mLayoutManager;
+    //List of entries per category
+    private ArrayList<Entry> entryPerCategory;
 
     private ArrayList<AttributesCategory> categoryList;
 
@@ -46,7 +50,36 @@ public class MainActivity extends AppCompatActivity implements Callback<ObjectRo
 
         initComponents();
 
-        ApiManager.getInstance().getLoadEntry(this);
+        //Register the activity in the event bus
+        BusManager.getInstance().getBus().register(this);
+
+        if (getResources().getBoolean(R.bool.twoPaneMode))
+        {
+            // all good, we use the fragments defined in the layout
+            return;
+        }
+
+        if (savedInstanceState != null)
+        {
+            // cleanup any existing fragments in case we are in detailed mode
+            getFragmentManager().executePendingTransactions();
+
+            Fragment fragmentById = getFragmentManager().
+                    findFragmentById(R.id.fragment_container);
+
+            if (fragmentById!=null)
+            {
+                getFragmentManager().beginTransaction()
+                        .remove(fragmentById).commit();
+            }
+        }
+
+        CategoryFragment listFragment = new CategoryFragment();
+
+        FrameLayout viewById = (FrameLayout) findViewById(R.id.fragment_container);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, listFragment).commit();
     }
 
     /**
@@ -54,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements Callback<ObjectRo
      */
     public void initComponents()
     {
+
         //Initialize Toolbar
         Toolbar toolbar = (Toolbar)findViewById( R.id.toolbar );
 
@@ -61,36 +95,74 @@ public class MainActivity extends AppCompatActivity implements Callback<ObjectRo
 
         categoryMapper = new CategoryEntryMapper();
 
-        //RecyclerView components
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_main);
-
-        mLayoutManager = new LinearLayoutManager(this);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
         categoryList = new ArrayList<AttributesCategory>(  );
 
-        // mRecyclerView.addItemDecoration( new DividerItemDecoration( this, LinearLayoutManager.VERTICAL ) );
-
-        adapter = new ActivityMainAdapter(categoryList);
-
-        mRecyclerView.setAdapter(adapter);
-
+        entryPerCategory = new ArrayList<Entry>();
     }
 
+    /**
+     * Callback with a successfull response from the API
+     * @param response
+     * @param retrofit
+     */
     @Override
     public void onResponse(Response<ObjectRoot> response, Retrofit retrofit)
     {
+        Log.e(TAG,"failure");
+        entryPerCategory.clear();
         categoryList.clear();
-        categoryList.addAll(categoryMapper.getCategories(response.body().getFeed().getEntry()));
-        adapter.notifyDataSetChanged();
+        entryPerCategory.addAll((ArrayList <Entry>)response.body().getFeed().getEntry());
+        categoryList.addAll(categoryMapper.getCategories(entryPerCategory));
+        Log.e(TAG,categoryList.size()+"");
+        BusManager.getInstance().getBus()
+                .post(categoryList);
+    }
 
-        //Log.e(TAG, "size: "+categoryList.size());
-        //Log.e(TAG,categoryMapper.toString());
+    /**
+     * Callback with the a failure response from the API
+     * @param t
+     */
+    @Override
+    public void onFailure(Throwable t)
+    {
+        Log.e(TAG,"failure");
     }
 
     @Override
-    public void onFailure(Throwable t) {
-        Log.e(TAG,"failure");
+    public void onCategorySelectedListener(String position)
+    {
+        //Obtain entries by category
+        entryPerCategory.addAll(categoryMapper.getEntryPerCategory((ArrayList<Entry>)entryPerCategory,
+                categoryList.get(Integer.valueOf(position)).getImId()));
+
+        //Validate if the
+        if (getResources().getBoolean(R.bool.twoPaneMode))
+        {
+            ListAppsFragment fragment = (ListAppsFragment) getFragmentManager()
+                    .findFragmentById(R.id.fragment_container);
+
+            fragment.setEntriesByCategory(entryPerCategory);
+        } else {
+            // replace the fragment
+            // Create fragment and give it an argument for the selected article
+            ListAppsFragment newFragment = new ListAppsFragment();
+            Bundle args = new Bundle();
+            args.putString(ListAppsFragment.EXTRA_URL, position);
+            //args.putCharSequenceArrayList(ListAppsFragment.EXTRA_URL, category);
+            newFragment.setArguments(args);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack so the user can navigate back
+
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
+
+            BusManager.getInstance().getBus().post(entryPerCategory);
+
+        }
     }
 }
