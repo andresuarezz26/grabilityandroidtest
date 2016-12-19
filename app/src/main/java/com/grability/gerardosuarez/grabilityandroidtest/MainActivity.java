@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.grability.gerardosuarez.grabilityandroidtest.fragments.CategoryFragment;
 import com.grability.gerardosuarez.grabilityandroidtest.fragments.DetailAppFragment;
@@ -30,6 +31,8 @@ import model.CategoryEntryMapper;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import utils.Constant;
+import utils.Validator;
 
 public class MainActivity extends AppCompatActivity
         implements Callback<ObjectRoot>, CategoryFragment.OnItemSelectedListener, ListAppsFragment.OnItemSelectedListener {
@@ -87,7 +90,14 @@ public class MainActivity extends AppCompatActivity
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, listFragment).commit();
 
-        ApiManager.getInstance().getLoadEntry(this);
+        if (Validator.getInstance().isOnline(this)==true)
+        {
+            ApiManager.getInstance().getLoadEntry(this);
+        }
+        else
+        {
+            Toast.makeText(this, Constant.NO_INTERNET, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -95,7 +105,6 @@ public class MainActivity extends AppCompatActivity
      */
     public void initComponents()
     {
-
         //Initialize Toolbar
         Toolbar toolbar = (Toolbar)findViewById( R.id.toolbar );
 
@@ -124,7 +133,6 @@ public class MainActivity extends AppCompatActivity
 
         BusManager.getInstance().getBus()
                 .post(categoryList);
-
     }
 
     /**
@@ -158,7 +166,6 @@ public class MainActivity extends AppCompatActivity
     public void sendEntryFragmentDetail (DetailAppEventFromFragment event)
     {
         BusManager.getInstance().getBus().post(new DetailAppEventFromActivity (entry) );
-
     }
 
     /**
@@ -168,7 +175,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFailure(Throwable t)
     {
-        Log.e(TAG,"failure");
+        Toast.makeText(this, Constant.API_FAILRE, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -177,6 +184,10 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
     }
 
+    /**
+     * Method that listen the position from  Fragment Category
+     * @param position
+     */
     @Override
     public void onCategorySelectedListener(String position)
     {
@@ -205,13 +216,15 @@ public class MainActivity extends AppCompatActivity
         Log.e(TAG, "size entries"+ entries.size());
 
         this.position = Integer.valueOf(position);
-
-
     }
 
 
+    /**
+     * Method that listen the entry to show in Detail Fragment
+     * @param entry
+     */
     @Override
-    public void onCategorySelectedListener(Entry entry)
+    public void onAppListSelectedListener(Entry entry)
     {
         // Create fragment and give it an argument for the selected article
         DetailAppFragment newFragment = new DetailAppFragment();

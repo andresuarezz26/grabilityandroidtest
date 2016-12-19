@@ -17,8 +17,6 @@ import com.squareup.otto.Subscribe;
  * Created by gerardosuarez on 17/12/16.
  */
 
-import android.widget.Toast;
-
 import java.util.ArrayList;
 
 import adapter.AppListAdapter;
@@ -64,7 +62,6 @@ public class ListAppsFragment extends Fragment
 
         return view;
     }
-
 
     @Override
     public void onResume()
@@ -118,7 +115,6 @@ public class ListAppsFragment extends Fragment
                     @Override public void onItemClick(View view, int position)
                     {
                         // do whatever
-                        Toast.makeText(getActivity(), "Entro al click" + position,Toast.LENGTH_LONG).show();
                         Log.e(TAG, "ENTRIESSS"+entriesByCategory.size());
                         sendEntry(entriesByCategory.get(position));
                     }
@@ -150,7 +146,7 @@ public class ListAppsFragment extends Fragment
      */
     public interface OnItemSelectedListener
     {
-        void onCategorySelectedListener( Entry entry);
+        void onAppListSelectedListener(Entry entry);
     }
 
     /**
@@ -159,7 +155,7 @@ public class ListAppsFragment extends Fragment
      */
     public void sendEntry(Entry entry)
     {
-        listener.onCategorySelectedListener(entry);
+        listener.onAppListSelectedListener(entry);
     }
 
     public ArrayList<Entry> getEntriesByCategory()

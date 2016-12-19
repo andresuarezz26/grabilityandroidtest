@@ -1,0 +1,6 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@mipmap/grability1" android:duration="150" />
+    <item android:drawable="@mipmap/grability5" android:duration="150" />
+    <item android:drawable="@mipmap/grability4" android:duration="150" />
+</animation-list>

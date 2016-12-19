@@ -66,14 +66,15 @@ public class DetailAppFragment extends Fragment
         amount.setText(event.getEntry().getImPrice().getAttributes().getAmount());
     }
 
+    /**
+     * Publish event to alert the activity that this Fragment is ready to receive data
+     */
     @Override
     public void onResume()
     {
         super.onResume();
         BusManager.getInstance().getBus().register(this);
         BusManager.getInstance().getBus().post(new DetailAppEventFromFragment());
-
-
     }
 
     @Override

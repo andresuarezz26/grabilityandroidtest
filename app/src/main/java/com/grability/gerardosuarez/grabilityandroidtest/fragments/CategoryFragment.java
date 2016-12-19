@@ -23,6 +23,7 @@ import events.CategoryListEventFromActivity;
 import events.CategoryListEventFromFragment;
 import listener.RecyclerItemClickListener;
 import model.CategoryEntryMapper;
+import utils.DividerItemDecoration;
 
 /**
  * Created by gerardosuarez on 17/12/16.
@@ -112,7 +113,7 @@ public class CategoryFragment extends Fragment
 
          mRecyclerView.setLayoutManager(mLayoutManager);
 
-         // mRecyclerView.addItemDecoration( new DividerItemDecoration( this, LinearLayoutManager.VERTICAL ) );
+         mRecyclerView.addItemDecoration( new DividerItemDecoration( getActivity(), LinearLayoutManager.VERTICAL ) );
 
          adapter = new CategoryAdapter(categoryList);
 
