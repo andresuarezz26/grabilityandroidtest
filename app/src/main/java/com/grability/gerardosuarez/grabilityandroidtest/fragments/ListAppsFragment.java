@@ -5,6 +5,7 @@ import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,8 @@ import model.CategoryEntryMapper;
 
 public class ListAppsFragment extends Fragment
 {
+    private static final String TAG = ListAppsFragment.class.getSimpleName();
+
     public static final String EXTRA_URL ="url";
 
     private ArrayList<Entry> entriesByCategory;
@@ -54,6 +57,9 @@ public class ListAppsFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_list_apps,
                 container, false);
+
+        initComponents(view);
+
         return view;
     }
 
@@ -74,6 +80,7 @@ public class ListAppsFragment extends Fragment
     {
         super.onResume();
         BusManager.getInstance().getBus().register(this);
+
     }
 
     @Override
@@ -95,6 +102,7 @@ public class ListAppsFragment extends Fragment
     @Subscribe
     public void obtainEntriesByCategory (ArrayList <Entry> entriesByCategory)
     {
+        Log.e(TAG, "obtainEntriesByCategory"+ entriesByCategory.size());
         this.entriesByCategory.clear();
         this.entriesByCategory.addAll(entriesByCategory);
         adapter.notifyDataSetChanged();

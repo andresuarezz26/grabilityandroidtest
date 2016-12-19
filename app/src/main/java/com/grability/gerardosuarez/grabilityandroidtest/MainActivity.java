@@ -2,6 +2,7 @@ package com.grability.gerardosuarez.grabilityandroidtest;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.grability.gerardosuarez.grabilityandroidtest.fragments.CategoryFragment;
 import com.grability.gerardosuarez.grabilityandroidtest.fragments.ListAppsFragment;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -20,9 +22,12 @@ import java.util.ArrayList;
 import adapter.CategoryAdapter;
 import api.ApiManager;
 import api.pojo.AttributesCategory;
+import api.pojo.Category;
 import api.pojo.Entry;
 import api.pojo.ObjectRoot;
 import bus.BusManager;
+import events.CategoryListEventFromActivity;
+import events.CategoryListEventFromFragment;
 import model.CategoryEntryMapper;
 import retrofit.Callback;
 import retrofit.Response;
@@ -80,6 +85,8 @@ public class MainActivity extends AppCompatActivity
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, listFragment).commit();
+
+        ApiManager.getInstance().getLoadEntry(this);
     }
 
     /**
@@ -108,14 +115,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResponse(Response<ObjectRoot> response, Retrofit retrofit)
     {
-        Log.e(TAG,"failure");
         entryPerCategory.clear();
         categoryList.clear();
+
         entryPerCategory.addAll((ArrayList <Entry>)response.body().getFeed().getEntry());
         categoryList.addAll(categoryMapper.getCategories(entryPerCategory));
-        Log.e(TAG,categoryList.size()+"");
+
         BusManager.getInstance().getBus()
                 .post(categoryList);
+    }
+
+    /**
+     * Listen the fragment to send the category list for reload it
+     * @param event
+     */
+    @Subscribe
+    public void reloadCategoryFragment (CategoryListEventFromFragment event)
+    {
+        BusManager.getInstance().getBus()
+                .post(new CategoryListEventFromActivity(categoryList));
     }
 
     /**
@@ -126,6 +144,12 @@ public class MainActivity extends AppCompatActivity
     public void onFailure(Throwable t)
     {
         Log.e(TAG,"failure");
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
     }
 
     @Override
@@ -162,7 +186,9 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
 
             BusManager.getInstance().getBus().post(entryPerCategory);
-
         }
     }
+
+
+
 }

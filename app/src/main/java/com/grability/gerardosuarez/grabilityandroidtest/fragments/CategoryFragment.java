@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import adapter.CategoryAdapter;
 import api.pojo.AttributesCategory;
 import bus.BusManager;
+import events.CategoryListEventFromActivity;
+import events.CategoryListEventFromFragment;
 import listener.RecyclerItemClickListener;
 import model.CategoryEntryMapper;
 
@@ -29,7 +32,8 @@ import model.CategoryEntryMapper;
  * Created by gerardosuarez on 17/12/16.
  */
 public class CategoryFragment extends Fragment
-    {
+{
+    private final static String TAG = CategoryFragment.class.getSimpleName();
 
     private OnItemSelectedListener listener;
 
@@ -63,8 +67,6 @@ public class CategoryFragment extends Fragment
 
         initComponents(view);
 
-        BusManager.getInstance().getBus().register(this);
-
         return view;
     }
 
@@ -77,6 +79,18 @@ public class CategoryFragment extends Fragment
     {
         this.categoryList.clear();
         this.categoryList.addAll(categoryList);
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Reload Category List from activity
+     * @param event
+     */
+    @Subscribe
+    public void reloadCategories (CategoryListEventFromActivity event)
+    {
+        this.categoryList.clear();
+        this.categoryList.addAll(event.getCategories());
         adapter.notifyDataSetChanged();
     }
 
@@ -124,6 +138,27 @@ public class CategoryFragment extends Fragment
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        BusManager.getInstance().getBus().register(this);
+
+        if(categoryList.size() == 0)
+        {
+           BusManager.getInstance().getBus().post(new CategoryListEventFromFragment());
+        }
+        Log.e(TAG, "onResume CategoryFragment" + categoryList.size());
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        BusManager.getInstance().getBus().unregister(this);
+    }
+
+        @Override
     public void onAttach(Context context)
     {
         super.onAttach(context);
@@ -138,11 +173,8 @@ public class CategoryFragment extends Fragment
     }
 
     // triggers update of the details fragment
-    public void updateDetail(String uri)
+    public void updateDetail(String position)
     {
-        // create fake data
-        String newTime = String.valueOf(System.currentTimeMillis());
-        // send data to activity
-        listener.onCategorySelectedListener(newTime);
+        listener.onCategorySelectedListener(position);
     }
 }
